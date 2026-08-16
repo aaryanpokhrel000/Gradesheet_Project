@@ -1,0 +1,125 @@
+/* Custom properties for a cohesive academic brand identity */
+:root {
+    --primary-color: #1e3a8a;       /* Deep Academic Navy Blue */
+    --hover-color: #0f172a;         /* Dark Slate Blue */
+    --background-color: #f1f5f9;    /* Clean, soft gray background */
+    --card-background: #ffffff;     /* Pure white for focus content */
+    --text-color: #1e293b;          /* High-contrast charcoal text */
+    --border-color: #cbd5e1;        /* Subtle slate border line */
+}
+
+/* Base Body Setup */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Main Form Card Wrapper Layout */
+.form-container {
+    background-color: var(--card-background);
+    padding: 35px;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+    border-top: 5px solid var(--primary-color);
+}
+
+/* Headings Configuration */
+h2 {
+    text-align: center;
+    color: var(--primary-color);
+    margin-bottom: 25px;
+    font-weight: 700;
+    font-size: 24px;
+    letter-spacing: -0.5px;
+}
+
+h3 {
+    color: var(--text-color);
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+/* Individual Form Group Items */
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* Input Fields Engineering */
+input[type="text"],
+input[type="number"] {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 15px;
+    transition: all 0.2s ease-in-out;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.15);
+}
+
+/* Grade Entry Form Separation Grid Lines */
+.subject-grid {
+    border-top: 2px solid #e2e8f0;
+    padding-top: 20px;
+    margin-top: 20px;
+}
+
+.subject-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.subject-row label {
+    margin-bottom: 0;
+    width: 45%;
+}
+
+.subject-row input {
+    width: 50%;
+}
+
+/* Call-to-Action Submission Interface Elements */
+.submit-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 14px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 6px;
+    width: 100%;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 15px;
+    box-shadow: 0 4px 6px -1px rgba(30, 58, 138, 0.2);
+}
+
+.submit-btn:hover {
+    background-color: var(--hover-color);
+}
