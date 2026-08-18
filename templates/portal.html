@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Records Gateway</title>
+    <style>
+        body {
+            background-color: #f1f5f9;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .portal-wrapper {
+            width: 100%;
+            max-width: 800px;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border-top: 6px solid #1e3a8a;
+            box-sizing: border-box;
+        }
+        .role-selection-container {
+            display: grid;
+            grid-template-cols: 1fr 1fr;
+            gap: 25px;
+            margin-top: 30px;
+        }
+        .role-card {
+            background-color: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s ease;
+        }
+        .role-card:hover {
+            border-color: #1e3a8a;
+            transform: translateY(-2px);
+        }
+        /* Dynamic Fade States Managed by JS Selection */
+        .role-card.faded {
+            opacity: 0.15;
+            pointer-events: none;
+            transform: scale(0.95);
+        }
+        .role-card.selected {
+            border-color: #1e3a8a;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.08);
+        }
+        .login-form-area {
+            display: none;
+            margin-top: 20px;
+            text-align: left;
+            border-top: 1px dashed #cbd5e1;
+            padding-top: 20px;
+        }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 13px; color: #475569; }
+        input { width: 100%; padding: 11px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
+        input:focus { border-color: #1e3a8a; outline: none; }
+        .submit-btn {
+            background-color: #1e3a8a; color: white; border: none; padding: 12px;
+            font-size: 14px; font-weight: bold; border-radius: 6px; width: 100%;
+            cursor: pointer; text-transform: uppercase; margin-top: 10px;
+        }
+        .submit-btn:hover { background-color: #0f172a; }
+        .error-banner { background-color: #fee2e2; color: #b91c1c; padding: 12px; border-radius: 6px; font-weight: bold; text-align: center; margin-bottom: 20px; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+    <div class="portal-wrapper">
+        <div style="text-align: center;">
+            <h1 style="color: #1e3a8a; margin: 0; font-size: 28px;">Academic Record Portal</h1>
+            <p style="color: #64748b; margin: 5px 0 0 0; font-size: 14px;">Select role identity to initialize secure gateway terminal</p>
+        </div>
+
+        {% if error %}
+        <div class="error-banner">{{ error }}</div>
+        {% endif %}
+
+        <div class="role-selection-container">
+            <!-- Faculty Block Choice Card -->
+            <div class="role-card" id="teacherCard" onclick="selectRole('teacher')">
+                <h3 style="margin: 0; color: #1e3a8a; font-size: 20px;">Faculty Administration</h3>
+                <p style="color: #64748b; font-size: 13px; margin: 8px 0 0 0;">Manage records and track metrics</p>
+                
+                <div class="login-form-area" id="teacherFormArea">
+                    <form action="/login" method="POST">
+                        <input type="hidden" name="role" value="teacher">
+                        <div class="form-group">
+                            <label>Administrative Password</label>
+                            <input type="password" name="password" placeholder="Enter password (admin123)" required onclick="event.stopPropagation();">
+                        </div>
+                        <button type="submit" class="submit-btn" onclick="event.stopPropagation();">Login as Faculty</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Student Block Choice Card -->
+            <div class="role-card" id="studentCard" onclick="selectRole('student')">
+                <h3 style="margin: 0; color: #d97706; font-size: 20px;">Student Self-Service</h3>
+                <p style="color: #64748b; font-size: 13px; margin: 8px 0 0 0;">Retrieve individual gradesheet logs</p>
+                
+                <div class="login-form-area" id="studentFormArea">
+                    <form action="/login" method="POST">
+                        <input type="hidden" name="role" value="student">
+                        <div class="form-group">
+                            <label>Registry Roll ID Number</label>
+                            <input type="text" name="roll_number" placeholder="e.g. 22722510" required onclick="event.stopPropagation();">
+                        </div>
+                        <button type="submit" class="submit-btn" style="background-color: #d97706;" onclick="event.stopPropagation();">Retrieve Report</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function selectRole(role) {
+            const teacherCard = document.getElementById("teacherCard");
+            const studentCard = document.getElementById("studentCard");
+            const teacherForm = document.getElementById("teacherFormArea");
+            const studentForm = document.getElementById("studentFormArea");
+
+            if (role === 'teacher') {
+                teacherCard.classList.add("selected");
+                teacherCard.classList.remove("faded");
+                studentCard.classList.add("faded");
+                studentCard.classList.remove("selected");
+                teacherForm.style.display = "block";
+                studentForm.style.display = "none";
+            } else {
+                studentCard.classList.add("selected");
+                studentCard.classList.remove("faded");
+                teacherCard.classList.add("faded");
+                teacherCard.classList.remove("selected");
+                studentForm.style.display = "block";
+                teacherForm.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>

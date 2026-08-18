@@ -3,85 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Records Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Faculty Control Console</title>
     <style>
-        /* Small layout adjustments to support wide student listing tables */
-        .form-container {
-            max-width: 700px !important;
-        }
-        .directory-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            font-size: 15px;
-        }
-        .directory-table th {
-            background-color: #1e3a8a;
-            color: white;
-            text-align: left;
-            padding: 12px;
-        }
-        .directory-table td {
-            padding: 12px;
-            border-bottom: 1px solid #cbd5e1;
-        }
-        .directory-table tr:hover {
-            background-color: #f8fafc;
-        }
-        .action-link {
-            display: inline-block;
-            background-color: #1e3a8a;
-            color: white;
-            padding: 6px 14px;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: bold;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-        }
-        .action-link:hover {
-            background-color: #0f172a;
-        }
+        body { background-color: #f1f5f9; color: #1e293b; font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; padding: 30px 15px; }
+        .container { max-width: 1100px; margin: 0 auto; background: white; padding: 35px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 6px solid #1e3a8a; }
+        .header-bar { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 25px; }
+        .btn-logout { background-color: #b91c1c; color: white; padding: 8px 16px; text-decoration: none; font-size: 13px; font-weight: bold; border-radius: 4px; }
+        .topper-grid { display: grid; grid-template-cols: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 30px; }
+        .topper-card { background: linear-gradient(135deg, #1e3a8a, #0f172a); border: 2px solid #d97706; padding: 12px; text-align: center; color: white; border-radius: 6px; }
+        .topper-card h6 { margin: 0; font-size: 10px; text-transform: uppercase; color: #f59e0b; }
+        .topper-card .name { font-size: 13px; font-weight: bold; margin: 4px 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .dashboard-layout { display: grid; grid-template-cols: 320px 1fr; gap: 30px; }
+        .form-panel { background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 20px; border-radius: 8px; height: fit-content; }
+        .form-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .form-row label { font-size: 12px; font-weight: 600; width: 50%; }
+        .form-row input { width: 45%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px; }
+        .submit-btn { background-color: #1e3a8a; color: white; border: none; padding: 10px; font-weight: bold; width: 100%; border-radius: 4px; cursor: pointer; text-transform: uppercase; margin-top: 15px; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th { background-color: #1e3a8a; color: white; padding: 12px; text-align: left; font-size: 11px; text-transform: uppercase; }
+        td { padding: 12px; border-bottom: 1px solid #e2e8f0; }
+        tr:hover { background-color: #f1f5f9; }
+        .rank-badge { background-color: #dcfce7; color: #15803d; padding: 3px 8px; border-radius: 4px; font-weight: bold; font-family: monospace; }
+        .search-box { width: 100%; padding: 10px; font-size: 14px; border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 15px; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
-    <div class="form-container">
-        <h2>Academic Student Directory</h2>
-        <p style="text-align: center; color: #64748b; font-size: 14px; margin-top: -15px; margin-bottom: 25px;">
-            Reading dynamic parameters actively from <strong>students.csv</strong>
-        </p>
-
-        {% if students %}
-        <table class="directory-table">
-            <thead>
-                <tr>
-                    <th>Roll Number</th>
-                    <th>Student Full Name</th>
-                    <th style="text-align: center;">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for student in students %}
-                <tr>
-                    <td style="font-family: monospace; font-weight: bold;">{{ student.roll_number }}</td>
-<td style="font-weight: 600;">{{ student.student_name }}</td>
-
-                    <td style="text-align: center;">
-                        <!-- Generates dynamic route linkages mapping directly to specific student row values -->
-                        <a href="/report/{{ student.roll_number }}" class="action-link">View Gradesheet</a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% else %}
-        <div style="text-align: center; padding: 20px; color: #ef4444; font-weight: bold;">
-            No student records found! Please ensure 'students.csv' is configured correctly in your directory.
+    <div class="container">
+        <div class="header-bar">
+            <div>
+                <h2 style="margin: 0; color: #1e3a8a;">Faculty Administration Console</h2>
+                <p style="margin: 4px 0 0 0; color: #64748b; font-size: 13px;">Secure Student Directory & Live Ranking Ledger</p>
+            </div>
+            <a href="/logout" class="btn-logout">Logout Portal</a>
         </div>
-        {% endif %}
+
+        <div class="topper-grid">
+            {% for subject, info in toppers.items() %}
+            <div class="topper-card">
+                <h6>{{ subject }} Topper</h6>
+                <div class="name">{{ info.name }}</div>
+                <div style="font-size: 14px; font-weight: bold;">{{ info.score }}</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="dashboard-layout">
+            <!-- Left Panel Form -->
+            <div class="form-panel">
+                <h4 style="margin: 0 0 15px 0; color: #1e3a8a; text-transform: uppercase; font-size: 13px; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px;">Add Student Record</h4>
+                <form action="/teacher/add_student" method="POST">
+                    <div style="margin-bottom: 12px;">
+                        <label style="display:block; font-size:12px; margin-bottom:4px; font-weight:600;">Full Name</label>
+                        <input type="text" name="student_name" required style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; box-sizing:border-box;">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display:block; font-size:12px; margin-bottom:4px; font-weight:600;">Roll Number</label>
+                        <input type="text" name="roll_number" required style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; box-sizing:border-box;">
+                    </div>
+
+                    <h5 style="margin: 15px 0 8px 0; font-size: 11px; text-transform: uppercase; color: #64748b;">Subject Marks</h5>
+                    <div class="form-row"><label>Mathematics</label><input type="number" name="math" min="0" max="100" value="0" required></div>
+                    <div class="form-row"><label>Science</label><input type="number" name="science" min="0" max="100" value="0" required></div>
+                    <div class="form-row"><label>English</label><input type="number" name="english" min="0" max="100" value="0" required></div>
+                    <div class="form-row"><label>History</label><input type="number" name="history" min="0" max="100" value="0" required></div>
+                    <div class="form-row"><label>Computer Sci</label><input type="number" name="computer" min="0" max="100" value="0" required></div>
+                    <div class="form-row"><label>Social Studies</label><input type="number" name="social" min="0" max="100" value="0" required></div>
+                    
+                    <button type="submit" class="submit-btn">Commit Record</button>
+                </form>
+            </div>
+
+            <!-- Right Panel Directory List -->
+            <div>
+                <input type="text" id="dashboardSearch" class="search-box" placeholder="Filter listing matching name or registry roll code...">
+                
+                <table id="recordsTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 15%;">Class Rank</th>
+                            <th style="width: 20%;">Roll ID</th>
+                            <th style="width: 35%;">Student Name</th>
+                            <th style="width: 15%;">Percentage</th>
+                            <th style="text-align: center; width: 15%;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr class="student-record-row" data-name="{{ student.student_name | lower }}" data-roll="{{ student.roll_number }}">
+                            <td><span class="rank-badge">Rank {{ student.class_rank }}</span></td>
+                            <td style="font-family: monospace; font-weight: bold;">{{ student.roll_number }}</td>
+                            <td style="font-weight: 600; color: #1e3a8a;">{{ student.student_name }}</td>
+                            <td style="font-weight: bold;">{{ student.percentage_computed }}%</td>
+                            <td style="text-align: center;">
+                                <a href="/report/{{ student.roll_number }}" style="background-color: #1e3a8a; color: white; padding: 4px 8px; text-decoration: none; font-size: 11px; font-weight: bold; border-radius: 4px;">Audit Report</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
+    <script>
+        document.getElementById("dashboardSearch").addEventListener("input", function(e) {
+            const query = e.target.value.toLowerCase().trim();
+            document.querySelectorAll(".student-record-row").forEach(row => {
+                const name = row.getAttribute("data-name");
+                const roll = row.getAttribute("data-roll");
+                row.style.display = (name.includes(query) || roll.includes(query)) ? "" : "none";
+            });
+        });
+    </script>
 </body>
 </html>
